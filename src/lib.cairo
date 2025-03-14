@@ -1,25 +1,22 @@
-fn main() -> u32 {
-    fib(16)
+pub mod components {
+    pub mod admin;
+    pub mod logics;
+    pub mod operations;
+    pub mod signing;
 }
-
-fn fib(mut n: u32) -> u32 {
-    let mut a: u32 = 0;
-    let mut b: u32 = 1;
-    while n != 0 {
-        n = n - 1;
-        let temp = b;
-        b = a + b;
-        a = temp;
-    };
-    a
+pub mod errors;
+pub mod interfaces {
+    pub mod iadmin;
+    pub mod ierc20;
+    pub mod ierc721;
+    pub mod itrajectfi;
+    pub mod ioperations;
 }
+pub mod types;
 
 #[cfg(test)]
-mod tests {
-    use super::fib;
-
-    #[test]
-    fn it_works() {
-        assert(fib(16) == 987, 'it works!');
-    }
+pub mod tests {
+    pub mod test_trajectfi;
 }
+
+pub mod trajectfi;
