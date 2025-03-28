@@ -1,5 +1,6 @@
 #[starknet::contract]
 pub mod Trajectfi {
+    use starknet::ContractAddress;
     use openzeppelin_access::accesscontrol::AccessControlComponent;
     use openzeppelin_access::ownable::OwnableComponent;
     use openzeppelin_introspection::src5::SRC5Component;
@@ -9,6 +10,7 @@ pub mod Trajectfi {
     use trajectfi::components::{
         admin::AdminComponent, logics::LogicComponent, signing::SigningComponent
     };
+    use trajectfi::types::{OWNER_ROLE, ADMIN_ROLE};
 
     component!(path: AccessControlComponent, storage: accesscontrol, event: AccessControlEvent);
     component!(path: OwnableComponent, storage: ownable, event: OwnableEvent);
@@ -29,6 +31,10 @@ pub mod Trajectfi {
     impl ERC721MixinImpl = ERC721Component::ERC721MixinImpl<ContractState>;
     impl ERC721InternalImpl = ERC721Component::InternalImpl<ContractState>;
 
+    #[abi(embed_v0)]
+    impl AccessControlImpl =
+        AccessControlComponent::AccessControlImpl<ContractState>;
+    impl AccessControlInternalImpl = AccessControlComponent::InternalImpl<ContractState>;
 
     #[abi(embed_v0)]
     impl OwnableImpl = OwnableComponent::OwnableImpl<ContractState>;
@@ -41,6 +47,11 @@ pub mod Trajectfi {
     impl ReentrancyGuardInternalImpl = ReentrancyGuardComponent::InternalImpl<ContractState>;
 
     impl UpgradeableInternalImpl = UpgradeableComponent::InternalImpl<ContractState>;
+
+    #[abi(embed_v0)]
+    impl AdminImpl = AdminComponent::AdminImpl<ContractState>;
+    impl AdminInternalImpl = AdminComponent::InternalImpl<ContractState>;
+
 
     #[storage]
     pub struct Storage {
@@ -89,5 +100,12 @@ pub mod Trajectfi {
         LogicComponentEvent: LogicComponent::Event,
         #[flat]
         SigningComponentEvent: SigningComponent::Event,
+    }
+
+    #[constructor]
+    fn constructor(ref self: ContractState, owner: ContractAddress) {
+        self.accesscontrol.initializer();
+        self.accesscontrol._grant_role(OWNER_ROLE, owner);
+        self.accesscontrol._grant_role(ADMIN_ROLE, owner);
     }
 }

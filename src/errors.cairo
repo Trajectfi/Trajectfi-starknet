@@ -1,3 +1,4 @@
 pub mod Errors {
-    // define your error here
+    /// Thrown when required role is missing
+    pub const MISSING_ROLE: felt252 = 'Error: Missing required role';
 }
