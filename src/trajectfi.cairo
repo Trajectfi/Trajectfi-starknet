@@ -104,8 +104,35 @@ pub mod Trajectfi {
 
     #[constructor]
     fn constructor(ref self: ContractState, owner: ContractAddress) {
+        // Initialize Ownable component with the deployer as owner
+        self.ownable.initializer(owner);
+        
+        // Initialize AccessControl
         self.accesscontrol.initializer();
         self.accesscontrol._grant_role(OWNER_ROLE, owner);
         self.accesscontrol._grant_role(ADMIN_ROLE, owner);
+        
+        // Initialize Pausable component
+        self.pausable.initializer();
     }
+
+      // Pause function - only callable by owner
+      #[abi(embed_v0)]
+      fn pause(ref self: ContractState) {
+          // Verify caller is owner
+          self.ownable.assert_only_owner();
+          
+          // Pause the contract
+          self.pausable._pause();
+      }
+  
+      // Unpause function - only callable by owner
+      #[abi(embed_v0)]
+      fn unpause(ref self: ContractState) {
+          // Verify caller is owner
+          self.ownable.assert_only_owner();
+          
+          // Unpause the contract
+          self.pausable._unpause();
+      }
 }
