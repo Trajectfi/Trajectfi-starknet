@@ -2,7 +2,7 @@ use starknet::ContractAddress;
 use starknet::testing::set_caller_address;
 use starknet::testing::set_contract_address;
 use starknet::testing::set_block_timestamp;
-use starknet::get_block_timestamp
+use starknet::get_block_timestamp;
 use core::zeroable::Zeroable;
 use core::poseidon::poseidon_hash_span;
 use super::components::operations::Operations;
