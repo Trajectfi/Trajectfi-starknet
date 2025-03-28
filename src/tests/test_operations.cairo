@@ -2,12 +2,12 @@ use starknet::ContractAddress;
 use starknet::testing::set_caller_address;
 use starknet::testing::set_contract_address;
 use starknet::testing::set_block_timestamp;
-use starknet::syscalls::get_block_timestamp;
+use starknet::get_block_timestamp
 use core::zeroable::Zeroable;
 use core::poseidon::poseidon_hash_span;
-use super::operations::Operations;
-use super::operations::Operations::InternalFunctionsTrait;
-use super::types::Loan;
+use super::components::operations::Operations;
+use super::components::operations::Operations::InternalFunctionsTrait;
+use super::components::types::Loan;
 #[test]
 fn test_get_loan() {
     // Setup test environment
@@ -60,13 +60,13 @@ fn test_get_non_existent_loan() {
     let state = Operations::ComponentState::new();
 
     // Try to get a loan that doesn't exist
-    let loan = state.getloan(999_u256);
+    let loan = state.get_loan(999_u256);
     // This should panic with 'Loan does not exist'
 }
 #[test]
 fn test_loan_exists() {
     // Setup test environment
-    let mut state = Operations::ComponentState::new();
+    let mut state = Operations::component_state_for_testing();
 
     // Create mock addresses
     let borrower = contract_address_const::<1>();
