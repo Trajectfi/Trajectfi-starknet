@@ -1,5 +1,5 @@
-use starknet::{ContractAddress, contract_address_const};
 use snforge_std::{ContractClassTrait, DeclareResultTrait, declare};
+use starknet::{ContractAddress, contract_address_const};
 
 pub fn deploy_contract() -> (ContractAddress, ContractAddress) {
     let owner_address = contract_address_const::<'owner_address'>();

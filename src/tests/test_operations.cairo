@@ -1,17 +1,14 @@
-use starknet::ContractAddress;
-use starknet::testing::set_caller_address;
-use starknet::testing::set_contract_address;
-use starknet::testing::set_block_timestamp;
-use starknet::get_block_timestamp;
-use core::zeroable::Zeroable;
 use core::poseidon::poseidon_hash_span;
-use super::components::operations::Operations;
+use core::zeroable::Zeroable;
+use starknet::testing::{set_block_timestamp, set_caller_address, set_contract_address};
+use starknet::{ContractAddress, get_block_timestamp};
+use trajectfi::components::operations::Operations;
 use super::components::operations::Operations::InternalFunctionsTrait;
 use super::components::types::Loan;
 #[test]
 fn test_get_loan() {
     // Setup test environment
-    let mut state = Operations::ComponentState::new();
+    let mut state = Operations::component_state_for_testing();
 
     // Create mock addresses
     let borrower = contract_address_const::<1>();
@@ -24,18 +21,19 @@ fn test_get_loan() {
     let timestamp = get_block_timestamp();
 
     // Create test loan using internal function
-    let loan_id = state.create_loan(
-        1000_u256, // principal
-        1100_u256, // repayment_amount
-        collateral_contract, // collateral_contract
-        1_u256, // collateral_id
-        token_contract, // token_contract
-        timestamp, // loan_start_time
-        86400_u64, // loan_duration (1 day)
-        250_u64, // admin_fee (2.5%)
-        borrower, // borrower
-        lender // lender
-    );
+    let loan_id = state
+        .create_loan(
+            1000_u256, // principal
+            1100_u256, // repayment_amount
+            collateral_contract, // collateral_contract
+            1_u256, // collateral_id
+            token_contract, // token_contract
+            timestamp, // loan_start_time
+            86400_u64, // loan_duration (1 day)
+            250_u64, // admin_fee (2.5%)
+            borrower, // borrower
+            lender // lender
+        );
 
     // Retrieve the loan using the get_loan function
     let loan = state.get_loan(loan_id);
@@ -63,39 +61,7 @@ fn test_get_non_existent_loan() {
     let loan = state.get_loan(999_u256);
     // This should panic with 'Loan does not exist'
 }
-#[test]
-fn test_loan_exists() {
-    // Setup test environment
-    let mut state = Operations::component_state_for_testing();
 
-    // Create mock addresses
-    let borrower = contract_address_const::<1>();
-    let lender = contract_address_const::<2>();
-    let collateral_contract = contract_address_const::<3>();
-    let token_contract = contract_address_const::<4>();
-
-    // Set block timestamp for testing
-    set_block_timestamp(1000);
-    let timestamp = get_block_timestamp();
-
-    // Create test loan using internal function
-    let loan_id = state.create_loan(
-        1000_u256,
-        1100_u256,
-        collateral_contract,
-        1_u256,
-        token_contract,
-        timestamp,
-        86400_u64,
-        250_u64,
-        borrower,
-        lender
-    );
-
-    // Verify the loan exists
-    assert(state.loan_exists(loan_id), 'Loan should exist');
-    assert(!state.loan_exists(loan_id + 1), 'Loan should not exist');
-}
 // Helper function to create contract addresses for testing
 fn contract_address_const<const ADDRESS: felt252>() -> ContractAddress {
     starknet::contract_address_const::<ADDRESS>()

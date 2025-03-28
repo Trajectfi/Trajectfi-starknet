@@ -5,12 +5,10 @@
 
 #[starknet::component]
 pub mod OperationsComponent {
+    use starknet::storage::{Map, StorageMapReadAccess};
     use trajectfi::interfaces::ioperations::IOperations;
     use crate::types::Loan;
-    
-    use starknet::storage::{ StorageMapReadAccess, Map,};
 
-    
 
     #[storage]
     pub struct Storage {
@@ -23,21 +21,18 @@ pub mod OperationsComponent {
 
     #[embeddable_as(OperationsImpl)]
     impl Operations<
-        TContractState, +HasComponent<TContractState>
+        TContractState, +HasComponent<TContractState>,
     > of IOperations<ComponentState<TContractState>> {
-
         fn get_loan(self: @ComponentState<TContractState>, loan_id: u256) -> Loan {
             // Check if the loan exists
-            let loan = self.loans.read(loan_id);        
-            assert(loan.id == loan_id, 'Loan does not exist');           
+            let loan = self.loans.read(loan_id);
+            assert(loan.id == loan_id, 'Loan does not exist');
             loan
         }
     }
 
     #[generate_trait]
     pub impl InternalImpl<
-        TContractState, +HasComponent<TContractState>, +Drop<TContractState>
-    > of InternalTrait<TContractState> {
-        
-    }
+        TContractState, +HasComponent<TContractState>, +Drop<TContractState>,
+    > of InternalTrait<TContractState> {}
 }
