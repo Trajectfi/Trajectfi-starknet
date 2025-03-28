@@ -1,11 +1,11 @@
 #[starknet::component]
 pub mod AdminComponent {
-    use starknet::{ContractAddress, get_caller_address};
-    use starknet::storage::{StoragePointerReadAccess, StoragePointerWriteAccess};
     use openzeppelin::access::accesscontrol::interface::IAccessControl;
+    use starknet::storage::{StoragePointerReadAccess, StoragePointerWriteAccess};
+    use starknet::{ContractAddress, get_caller_address};
+    use trajectfi::errors::Errors::MISSING_ROLE;
     use trajectfi::interfaces::iadmin::IAdmin;
-    use trajectfi::types::{OWNER_ROLE, ADMIN_ROLE};
-    use trajectfi::errors::Errors::{MISSING_ROLE};
+    use trajectfi::types::{ADMIN_ROLE, OWNER_ROLE};
 
     /// Maximum admin fee (in basis points), where 1000 bps equals 10%
     const MAX_ADMIN_FEE: u64 = 1000;
@@ -30,7 +30,7 @@ pub mod AdminComponent {
 
     #[embeddable_as(AdminImpl)]
     impl Admin<
-        TContractState, +HasComponent<TContractState>, +IAccessControl<TContractState>
+        TContractState, +HasComponent<TContractState>, +IAccessControl<TContractState>,
     > of IAdmin<ComponentState<TContractState>> {
         fn set_admin_fee(ref self: ComponentState<TContractState>, new_fee: u64) {
             let caller = get_caller_address();
@@ -53,6 +53,6 @@ pub mod AdminComponent {
 
     #[generate_trait]
     pub impl InternalImpl<
-        TContractState, +HasComponent<TContractState>
+        TContractState, +HasComponent<TContractState>,
     > of InternalTrait<TContractState> {}
 }
