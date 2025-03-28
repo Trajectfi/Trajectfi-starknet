@@ -1,15 +1,10 @@
 #[starknet::component]
 pub mod LogicComponent {
-
     #[storage]
-    pub struct Storage {
-       
-    }
+    pub struct Storage {}
 
     #[generate_trait]
     pub impl InternalImpl<
         TContractState, +HasComponent<TContractState>
-    > of InternalTrait<TContractState> {
-
-    }
+    > of InternalTrait<TContractState> {}
 }

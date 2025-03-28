@@ -14,3 +14,6 @@ pub struct Loan {
     pub lender: ContractAddress,
     pub id: u256,
 }
+pub const OWNER_ROLE: felt252 = selector!("Owner");
+pub const ADMIN_ROLE: felt252 = selector!("Admin");
+

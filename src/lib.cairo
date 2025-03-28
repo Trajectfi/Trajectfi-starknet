@@ -18,6 +18,8 @@ pub mod types;
 pub mod tests {
     pub mod test_trajectfi;
     pub mod test_operations;
+    pub mod test_admin;
+    pub mod test_utils;
 }
 
 pub mod trajectfi;
