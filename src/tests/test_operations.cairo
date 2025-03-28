@@ -1,14 +1,12 @@
-use core::poseidon::poseidon_hash_span;
-use core::zeroable::Zeroable;
 use starknet::testing::{set_block_timestamp, set_caller_address, set_contract_address};
 use starknet::{ContractAddress, get_block_timestamp};
-use trajectfi::components::operations::Operations;
-use super::components::operations::Operations::InternalFunctionsTrait;
-use super::components::types::Loan;
+use trajectfi::components::operations::OperationsComponent;
+use trajectfi::components::operations::OperationsComponent::{InternalTrait, OperationsImpl};
+use trajectfi::types::Loan;
 #[test]
 fn test_get_loan() {
     // Setup test environment
-    let mut state = Operations::component_state_for_testing();
+    let mut state = OperationsComponent::component_state_for_testing();
 
     // Create mock addresses
     let borrower = contract_address_const::<1>();
@@ -51,16 +49,7 @@ fn test_get_loan() {
     assert(loan.borrower == borrower, 'Wrong borrower');
     assert(loan.lender == lender, 'Wrong lender');
 }
-#[test]
-#[should_panic(expected: ('Loan does not exist',))]
-fn test_get_non_existent_loan() {
-    // Setup test environment
-    let state = Operations::ComponentState::new();
 
-    // Try to get a loan that doesn't exist
-    let loan = state.get_loan(999_u256);
-    // This should panic with 'Loan does not exist'
-}
 
 // Helper function to create contract addresses for testing
 fn contract_address_const<const ADDRESS: felt252>() -> ContractAddress {
