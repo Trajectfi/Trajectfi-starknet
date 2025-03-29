@@ -1,4 +1,3 @@
-use starknet::ContractAddress;
 use crate::types::Loan;
 
 #[starknet::interface]

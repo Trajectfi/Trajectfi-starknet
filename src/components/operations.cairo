@@ -7,7 +7,8 @@
 pub mod OperationsComponent {
     use starknet::ContractAddress;
     use starknet::storage::{
-        Map, StorageMapReadAccess, StoragePointerReadAccess, StoragePointerWriteAccess,
+        Map, StorageMapReadAccess, StoragePathEntry, StoragePointerReadAccess,
+        StoragePointerWriteAccess,
     };
     use trajectfi::interfaces::ioperations::IOperations;
     use crate::types::Loan;
@@ -69,7 +70,7 @@ pub mod OperationsComponent {
             };
 
             // Store the loan
-            self.loans.write(loan_id, loan);
+            self.loans.entry(loan_id).write(loan);
 
             // Increment loan count
             self.loan_count.write(loan_id);
