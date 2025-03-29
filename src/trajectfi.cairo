@@ -11,6 +11,7 @@ pub mod Trajectfi {
         admin::AdminComponent, logics::LogicComponent, signing::SigningComponent
     };
     use trajectfi::types::{OWNER_ROLE, ADMIN_ROLE};
+    use trajectfi::interfaces::itrajectfi::ITrajectfi;
 
     component!(path: AccessControlComponent, storage: accesscontrol, event: AccessControlEvent);
     component!(path: OwnableComponent, storage: ownable, event: OwnableEvent);
@@ -52,6 +53,9 @@ pub mod Trajectfi {
     impl AdminImpl = AdminComponent::AdminImpl<ContractState>;
     impl AdminInternalImpl = AdminComponent::InternalImpl<ContractState>;
 
+    // Implement the ITrajectfi interface
+    #[abi(embed_v0)]
+    impl ITrajectfiImpl = ITrajectfi<ContractState>;
 
     #[storage]
     pub struct Storage {
@@ -116,23 +120,21 @@ pub mod Trajectfi {
         self.pausable.initializer();
     }
 
-      // Pause function - only callable by owner
-      #[abi(embed_v0)]
-      fn pause(ref self: ContractState) {
-          // Verify caller is owner
-          self.ownable.assert_only_owner();
-          
-          // Pause the contract
-          self.pausable._pause();
-      }
-  
-      // Unpause function - only callable by owner
-      #[abi(embed_v0)]
-      fn unpause(ref self: ContractState) {
-          // Verify caller is owner
-          self.ownable.assert_only_owner();
-          
-          // Unpause the contract
-          self.pausable._unpause();
-      }
+    // Pause function - only callable by owner
+    fn pause(ref self: ContractState) {
+        // Verify caller is owner
+        self.ownable.assert_only_owner();
+        
+        // Pause the contract
+        self.pausable._pause();
+    }
+
+    // Unpause function - only callable by owner
+    fn unpause(ref self: ContractState) {
+        // Verify caller is owner
+        self.ownable.assert_only_owner();
+        
+        // Unpause the contract
+        self.pausable._unpause();
+    }
 }
