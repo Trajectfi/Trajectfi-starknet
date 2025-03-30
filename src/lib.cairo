@@ -9,15 +9,15 @@ pub mod interfaces {
     pub mod iadmin;
     pub mod ierc20;
     pub mod ierc721;
-    pub mod itrajectfi;
     pub mod ioperations;
+    pub mod itrajectfi;
 }
 pub mod types;
 
 #[cfg(test)]
 pub mod tests {
-    pub mod test_trajectfi;
     pub mod test_admin;
+    pub mod test_trajectfi;
     pub mod test_utils;
 }
 

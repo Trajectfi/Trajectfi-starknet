@@ -1,10 +1,10 @@
-use starknet::{contract_address_const};
 use snforge_std::{
     EventSpyAssertionsTrait, spy_events, start_cheat_caller_address, stop_cheat_caller_address,
 };
-use trajectfi::interfaces::iadmin::{IAdminDispatcher, IAdminDispatcherTrait};
+use starknet::contract_address_const;
 use trajectfi::components::admin::AdminComponent;
-use super::test_utils::{deploy_contract};
+use trajectfi::interfaces::iadmin::{IAdminDispatcher, IAdminDispatcherTrait};
+use super::test_utils::deploy_contract;
 
 #[test]
 fn test_set_and_get_admin_fee() {
@@ -20,7 +20,7 @@ fn test_set_and_get_admin_fee() {
 
     assert!(
         admin_dispatcher.get_admin_fee() == fee,
-        "The stored admin fee does not match the expected value"
+        "The stored admin fee does not match the expected value",
     );
 
     let expected_event = AdminComponent::Event::AdminFeeUpdated(
