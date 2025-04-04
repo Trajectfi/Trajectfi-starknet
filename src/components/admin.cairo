@@ -16,6 +16,7 @@ pub mod AdminComponent {
     pub struct Storage {
         admin_fee: u64,
         accepted_nft_status: Map<ContractAddress, bool>,
+        accepted_token_status: Map<ContractAddress, bool>,
     }
 
     #[event]
@@ -23,6 +24,7 @@ pub mod AdminComponent {
     pub enum Event {
         AdminFeeUpdated: AdminFeeUpdated,
         NFTWhitelisted: NFTWhitelisted,
+        TokenWhitelisted: TokenWhitelisted,
     }
 
     #[derive(Drop, starknet::Event)]
@@ -34,6 +36,13 @@ pub mod AdminComponent {
 
     #[derive(Drop, starknet::Event)]
     pub struct NFTWhitelisted {
+        #[key]
+        pub nft: ContractAddress,
+        pub status: bool,
+    }
+
+    #[derive(Drop, starknet::Event)]
+    pub struct TokenWhitelisted {
         #[key]
         pub token: ContractAddress,
         pub status: bool,
@@ -73,13 +82,32 @@ pub mod AdminComponent {
 
             // Update whitelist status for the NFT collection (true to add, false to remove)
             self.accepted_nft_status.entry(nft).write(status);
-            self.emit(NFTWhitelisted { token: nft, status });
+            self.emit(NFTWhitelisted { nft, status });
         }
 
-        fn is_nft_whitelisted(
+        fn is_nft_whitelisted(self: @ComponentState<TContractState>, nft: ContractAddress) -> bool {
+            self.accepted_nft_status.entry(nft).read()
+        }
+
+        fn whitelist_token(
+            ref self: ComponentState<TContractState>, token: ContractAddress, status: bool
+        ) {
+            let caller = get_caller_address();
+
+            // Ensure the caller has the admin or owner role
+            let is_caller_authorized = self.get_contract().has_role(ADMIN_ROLE, caller)
+                || self.get_contract().has_role(OWNER_ROLE, caller);
+            assert(is_caller_authorized, MISSING_ROLE);
+
+            // Update whitelist status for the Token (true to add, false to remove)
+            self.accepted_token_status.entry(token).write(status);
+            self.emit(TokenWhitelisted { token, status });
+        }
+
+        fn is_token_whitelisted(
             self: @ComponentState<TContractState>, token: ContractAddress
         ) -> bool {
-            self.accepted_nft_status.entry(token).read()
+            self.accepted_token_status.entry(token).read()
         }
     }
 
