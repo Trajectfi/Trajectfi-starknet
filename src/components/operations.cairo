@@ -16,8 +16,8 @@ pub mod OperationsComponent {
 
     #[storage]
     pub struct Storage {
-        loans: Map<u256, Loan>,
-        loan_count: u256,
+        pub loans: Map<u256, Loan>,
+        pub loan_count: u256,
     }
     #[event]
     #[derive(Drop, starknet::Event)]
