@@ -54,7 +54,6 @@ pub mod Trajectfi {
     impl AdminInternalImpl = AdminComponent::InternalImpl<ContractState>;
 
     // Implement the ITrajectfi interface
-    
 
     #[storage]
     pub struct Storage {
@@ -116,7 +115,7 @@ pub mod Trajectfi {
         self.accesscontrol._grant_role(ADMIN_ROLE, owner)
     }
     #[abi(embed_v0)]
-    impl ITrajectfiImpl of ITrajectfi<ContractState>{
+    impl ITrajectfiImpl of ITrajectfi<ContractState> {
         // Pause function - only callable by owner
         fn pause(ref self: ContractState) {
             // Verify caller is owner
