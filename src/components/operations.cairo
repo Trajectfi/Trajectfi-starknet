@@ -16,11 +16,11 @@ pub mod OperationsComponent {
 
     #[embeddable_as(OperationsImpl)]
     impl Operations<
-        TContractState, +HasComponent<TContractState>
+        TContractState, +HasComponent<TContractState>,
     > of IOperations<ComponentState<TContractState>> {}
 
     #[generate_trait]
     pub impl InternalImpl<
-        TContractState, +HasComponent<TContractState>, +Drop<TContractState>
+        TContractState, +HasComponent<TContractState>, +Drop<TContractState>,
     > of InternalTrait<TContractState> {}
 }
