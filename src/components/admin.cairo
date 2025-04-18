@@ -5,8 +5,6 @@ pub mod AdminComponent {
         StoragePointerReadAccess, StoragePointerWriteAccess, StoragePathEntry, Map
     };
     use openzeppelin::access::accesscontrol::interface::IAccessControl;
-    use starknet::storage::{StoragePointerReadAccess, StoragePointerWriteAccess};
-    use starknet::{ContractAddress, get_caller_address};
     use trajectfi::errors::Errors::MISSING_ROLE;
     use trajectfi::interfaces::iadmin::IAdmin;
     use trajectfi::types::{ADMIN_ROLE, OWNER_ROLE};

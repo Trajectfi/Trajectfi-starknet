@@ -17,6 +17,7 @@ pub mod types;
 #[cfg(test)]
 pub mod tests {
     pub mod test_admin;
+    pub mod test_operations;
     pub mod test_trajectfi;
     pub mod test_utils;
 }
