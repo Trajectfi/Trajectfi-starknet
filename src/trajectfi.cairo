@@ -54,8 +54,7 @@ pub mod Trajectfi {
     impl AdminInternalImpl = AdminComponent::InternalImpl<ContractState>;
 
     // Implement the ITrajectfi interface
-    #[abi(embed_v0)]
-    impl ITrajectfiImpl = ITrajectfi<ContractState>;
+    
 
     #[storage]
     pub struct Storage {
@@ -114,27 +113,26 @@ pub mod Trajectfi {
         // Initialize AccessControl
         self.accesscontrol.initializer();
         self.accesscontrol._grant_role(OWNER_ROLE, owner);
-        self.accesscontrol._grant_role(ADMIN_ROLE, owner);
-
-        // Initialize Pausable component
-        self.pausable.initializer();
+        self.accesscontrol._grant_role(ADMIN_ROLE, owner)
     }
+    #[abi(embed_v0)]
+    impl ITrajectfiImpl of ITrajectfi<ContractState>{
+        // Pause function - only callable by owner
+        fn pause(ref self: ContractState) {
+            // Verify caller is owner
+            self.ownable.assert_only_owner();
 
-    // Pause function - only callable by owner
-    fn pause(ref self: ContractState) {
-        // Verify caller is owner
-        self.ownable.assert_only_owner();
+            // Pause the contract
+            self.pausable.pause();
+        }
 
-        // Pause the contract
-        self.pausable._pause();
-    }
+        // Unpause function - only callable by owner
+        fn unpause(ref self: ContractState) {
+            // Verify caller is owner
+            self.ownable.assert_only_owner();
 
-    // Unpause function - only callable by owner
-    fn unpause(ref self: ContractState) {
-        // Verify caller is owner
-        self.ownable.assert_only_owner();
-
-        // Unpause the contract
-        self.pausable._unpause();
+            // Unpause the contract
+            self.pausable.unpause();
+        }
     }
 }
