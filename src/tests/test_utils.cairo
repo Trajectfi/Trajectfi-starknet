@@ -10,3 +10,21 @@ pub fn deploy_contract() -> (ContractAddress, ContractAddress) {
 
     (contract_address, owner_address)
 }
+
+#[test]
+fn test_admin_fee_zero_interest() {
+    let interest = u256_from_u32(0);
+    let admin_fee_bps = u256_from_u32(500);
+    let expected = u256_from_u32(0);
+    let result = compute_admin_fee(interest, admin_fee_bps);
+    assert(result == expected, 'Zero interest failed');
+}
+
+#[test]
+fn test_admin_fee_zero_fee() {
+    let interest = u256_from_u32(100_000);
+    let admin_fee_bps = u256_from_u32(0);
+    let expected = u256_from_u32(0);
+    let result = compute_admin_fee(interest, admin_fee_bps);
+    assert(result == expected, 'Zero fee failed');
+}
