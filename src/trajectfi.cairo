@@ -134,17 +134,21 @@ pub mod Trajectfi {
             // Unpause the contract
             self.pausable.unpause();
         }
-        
+
         // Invalidate a unique ID to prevent replay attacks
         fn invalidate_unique_id(ref self: ContractState, unique_id: u256) -> bool {
             self.pausable.assert_not_paused();
-            
+
             LogicComponent::InternalTrait::invalidate_unique_id(ref self.logics_storage, unique_id)
         }
-        
+
         // Check if a unique ID is invalid for a given contract address
-        fn is_unique_id_invalid(self: @ContractState, contract_address: ContractAddress, unique_id: u256) -> bool {
-            LogicComponent::InternalTrait::is_unique_id_invalid(self.logics_storage, contract_address, unique_id)
+        fn is_unique_id_invalid(
+            self: @ContractState, contract_address: ContractAddress, unique_id: u256
+        ) -> bool {
+            LogicComponent::InternalTrait::is_unique_id_invalid(
+                self.logics_storage, contract_address, unique_id
+            )
         }
     }
 }
