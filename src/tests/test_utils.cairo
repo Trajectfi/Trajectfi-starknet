@@ -1,6 +1,6 @@
+use core::integer::u256;
 use snforge_std::{ContractClassTrait, DeclareResultTrait, declare};
 use starknet::{ContractAddress, contract_address_const};
-use core::integer::u256;
 use crate::components::logics::compute_admin_fee;
 
 pub fn deploy_contract() -> (ContractAddress, ContractAddress) {
