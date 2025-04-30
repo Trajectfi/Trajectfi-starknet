@@ -26,7 +26,7 @@ pub mod OperationsComponent {
     }
 
     #[derive(Drop, starknet::Event)]
-    pub struct LoanCreated{
+    pub struct LoanCreated {
         pub principal: u256,
         pub repayment_amount: u256,
         pub collateral_contract: ContractAddress,
@@ -70,7 +70,7 @@ pub mod OperationsComponent {
         ) -> u256 {
             let id = self.loan_count.read() + 1;
             let loan_start_time = get_block_timestamp();
-            let loan = Loan{
+            let loan = Loan {
                 principal,
                 repayment_amount,
                 collateral_contract,
@@ -85,21 +85,22 @@ pub mod OperationsComponent {
             };
             self.loans.entry(id).write(loan);
             self.loan_count.write(id);
-            self.emit(
-                LoanCreated{
-                    principal,
-                    repayment_amount,
-                    collateral_contract,
-                    collateral_id,
-                    token_contract,
-                    loan_start_time,
-                    loan_duration,
-                    admin_fee,
-                    lender,
-                    borrower,
-                    id
-                }
-            );
+            self
+                .emit(
+                    LoanCreated {
+                        principal,
+                        repayment_amount,
+                        collateral_contract,
+                        collateral_id,
+                        token_contract,
+                        loan_start_time,
+                        loan_duration,
+                        admin_fee,
+                        lender,
+                        borrower,
+                        id
+                    }
+                );
             id
         }
     }
