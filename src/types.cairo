@@ -12,8 +12,17 @@ pub struct Loan {
     pub admin_fee: u64,
     pub borrower: ContractAddress,
     pub lender: ContractAddress,
+    pub status: LoanStatus,
     pub id: u256,
 }
+
+#[derive(Copy, Drop, PartialEq, Serde, starknet::Store)]
+pub enum LoanStatus {
+    ONGOING,
+    REPAID,
+    FORECLOSED,
+}
+
 pub const OWNER_ROLE: felt252 = selector!("Owner");
 pub const ADMIN_ROLE: felt252 = selector!("Admin");
 
