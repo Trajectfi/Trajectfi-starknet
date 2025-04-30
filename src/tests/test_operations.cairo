@@ -2,7 +2,7 @@ use starknet::{ContractAddress};
 use starknet::storage::{StoragePointerWriteAccess, StoragePathEntry};
 use trajectfi::components::operations::OperationsComponent;
 use trajectfi::components::operations::OperationsComponent::{OperationsImpl};
-use trajectfi::types::Loan;
+use trajectfi::types::{Loan, LoanStatus};
 
 
 #[test]
@@ -33,6 +33,7 @@ fn test_get_loan() {
         admin_fee: 250_u64,
         borrower,
         lender,
+        status: LoanStatus::ONGOING,
     };
 
     state.operations.loans.entry(loan_id).write(loan);
@@ -157,4 +158,5 @@ fn test_create_loan() {
     assert(retrieved_loan.admin_fee == 250_u64, 'Wrong admin fee');
     assert(retrieved_loan.borrower == borrower, 'Wrong borrower');
     assert(retrieved_loan.lender == lender, 'Wrong lender');
+    assert(retrieved_loan.status == LoanStatus::ONGOING, 'Wrong status');
 }

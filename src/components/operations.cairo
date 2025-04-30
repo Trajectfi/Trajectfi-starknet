@@ -11,7 +11,7 @@ pub mod OperationsComponent {
         StoragePointerWriteAccess,
     };
     use trajectfi::interfaces::ioperations::IOperations;
-    use crate::types::Loan;
+    use crate::types::{Loan, LoanStatus};
 
 
     #[storage]
@@ -81,6 +81,7 @@ pub mod OperationsComponent {
                 admin_fee,
                 lender,
                 borrower,
+                status: LoanStatus::ONGOING,
                 id
             };
             self.loans.entry(id).write(loan);
