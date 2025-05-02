@@ -50,6 +50,11 @@ pub mod OperationsComponent {
             assert(loan.id == loan_id, 'Loan does not exist');
             loan
         }
+        fn is_active_loan(self: @ComponentState<TContractState>, loan_id: u256) -> bool {
+            let loan = self.get_loan(loan_id);
+            // place the is_valid_loan check here
+            loan.status == LoanStatus::ONGOING
+        }
     }
 
     #[generate_trait]

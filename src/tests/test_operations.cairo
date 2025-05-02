@@ -160,3 +160,72 @@ fn test_create_loan() {
     assert(retrieved_loan.lender == lender, 'Wrong lender');
     assert(retrieved_loan.status == LoanStatus::ONGOING, 'Wrong status');
 }
+
+fn test_is_active_loan() {
+    // Setup test environment
+    let mut state: MockOperationsContract::ContractState =
+        MockOperationsContract::contract_state_for_testing();
+
+    // Create mock addresses
+    let borrower = contract_address_const::<1>();
+    let lender = contract_address_const::<2>();
+    let collateral_contract = contract_address_const::<3>();
+    let token_contract = contract_address_const::<4>();
+
+    let timestamp = 3000000000_u64;
+
+    // Create loan directly in storage
+    let loan_id = 1_u256;
+    let loan = Loan {
+        id: loan_id,
+        principal: 1000_u256,
+        repayment_amount: 1100_u256,
+        collateral_contract,
+        collateral_id: 1_u256,
+        token_contract,
+        loan_start_time: timestamp,
+        loan_duration: 86400_u64,
+        admin_fee: 250_u64,
+        borrower,
+        lender,
+        status: LoanStatus::ONGOING,
+    };
+
+    state.operations.loans.entry(loan_id).write(loan);
+
+    assert(state.is_active_loan(loan_id), 'Loan should be active');
+}
+fn test_is_active_loan_false() {
+    // Setup test environment
+    let mut state: MockOperationsContract::ContractState =
+        MockOperationsContract::contract_state_for_testing();
+
+    // Create mock addresses
+    let borrower = contract_address_const::<1>();
+    let lender = contract_address_const::<2>();
+    let collateral_contract = contract_address_const::<3>();
+    let token_contract = contract_address_const::<4>();
+
+    let timestamp = 3000000000_u64;
+
+    // Create loan directly in storage
+    let loan_id = 1_u256;
+    let loan = Loan {
+        id: loan_id,
+        principal: 1000_u256,
+        repayment_amount: 1100_u256,
+        collateral_contract,
+        collateral_id: 1_u256,
+        token_contract,
+        loan_start_time: timestamp,
+        loan_duration: 86400_u64,
+        admin_fee: 250_u64,
+        borrower,
+        lender,
+        status: LoanStatus::REPAID
+    };
+
+    state.operations.loans.entry(loan_id).write(loan);
+
+    assert(!state.is_active_loan(loan_id), 'Loan should not be active');
+}
