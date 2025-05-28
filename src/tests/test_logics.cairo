@@ -42,7 +42,6 @@ fn test_invalidate_unique_id() {
     let different_id = 456_u256;
     let is_invalid = state.is_unique_id_invalid(owner_address, different_id);
     assert(is_invalid == false, 'Different ID should be valid');
-
 }
 
 #[test]
@@ -116,9 +115,7 @@ mod MockLogicsContract {
             self.logics.invalidate_unique_id(unique_id)
         }
         fn is_unique_id_invalid(
-            self: @ContractState,
-            contract_address: ContractAddress,
-            unique_id: u256
+            self: @ContractState, contract_address: ContractAddress, unique_id: u256
         ) -> bool {
             self.logics.is_unique_id_invalid(contract_address, unique_id)
         }
