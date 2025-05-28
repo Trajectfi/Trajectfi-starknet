@@ -30,14 +30,10 @@ fn test_invalidate_unique_id() {
     let mut state: TestingState = LogicComponent::component_state_for_testing();
     let unique_id: u256 = 10000;
     let owner_address: ContractAddress = 'address'.try_into().unwrap();
-    let result = state.invalidate_unique_id(unique_id);
-    assert(result == true, 'Should be newly invalidated');
+    state.invalidate_unique_id(owner_address, unique_id);
 
     let is_invalid = state.is_unique_id_invalid(owner_address, unique_id);
     assert(is_invalid == true, 'Should be marked as invalid');
-
-    let result = state.invalidate_unique_id(unique_id);
-    assert(result == false, 'Should be already invalidated');
 
     let different_id = 456_u256;
     let is_invalid = state.is_unique_id_invalid(owner_address, different_id);
@@ -111,8 +107,8 @@ mod MockLogicsContract {
 
     #[generate_trait]
     pub impl InternalImpl of InternalTrait {
-        fn invalidate_unique_id(ref self: ContractState, unique_id: u256) -> bool {
-            self.logics.invalidate_unique_id(unique_id)
+        fn invalidate_unique_id(ref self: ContractState, owner: ContractAddress, unique_id: u256) {
+            self.logics.invalidate_unique_id(owner, unique_id)
         }
         fn is_unique_id_invalid(
             self: @ContractState, contract_address: ContractAddress, unique_id: u256

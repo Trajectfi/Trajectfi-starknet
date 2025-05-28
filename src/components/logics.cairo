@@ -27,22 +27,18 @@ pub mod LogicComponent {
     pub impl InternalImpl<
         TContractState, +HasComponent<TContractState>,
     > of InternalTrait<TContractState> {
-        fn invalidate_unique_id(ref self: ComponentState<TContractState>, unique_id: u256) -> bool {
-            let contract_address = get_caller_address();
-
-            let key = (contract_address, unique_id);
+        fn invalidate_unique_id(
+            ref self: ComponentState<TContractState>, owner: ContractAddress, unique_id: u256
+        ) {
+            let key = (owner, unique_id);
 
             let is_already_invalid = self.is_unique_id_invalid.read(key);
 
             if !is_already_invalid {
                 self.is_unique_id_invalid.write(key, true);
 
-                self.emit(UniqueIdInvalidated { contract_address, unique_id });
-
-                return true;
+                self.emit(UniqueIdInvalidated { contract_address: owner, unique_id });
             }
-
-            false
         }
 
         fn is_unique_id_invalid(
