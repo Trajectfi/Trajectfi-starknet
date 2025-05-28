@@ -53,3 +53,44 @@ fn test_invalidate_unique_id() {
 
     stop_cheat_caller_address(dispatcher.contract_address);
 }
+#[starknet::contract]
+mod MockLogicsContract {
+    use starknet::ContractAddress;
+    use trajectfi::components::logics::LogicComponent;
+
+
+    component!(path: LogicComponent, storage: logics, event: LogicEvent);
+
+
+    pub impl LogicsInternalImpl = LogicComponent::InternalImpl<ContractState>;
+
+    #[storage]
+    pub struct Storage {
+        #[substorage(v0)]
+        pub logics: LogicComponent::Storage,
+    }
+
+    #[event]
+    #[derive(Drop, starknet::Event)]
+    enum Event {
+        #[flat]
+        LogicEvent: LogicComponent::Event,
+    }
+
+    #[generate_trait]
+    pub impl InternalImpl of InternalTrait {
+        fn invalidate_unique_id(ref self: ContractState, unique_id: u256) -> bool {
+            self.logics.invalidate_unique_id(unique_id)
+        }
+        fn is_unique_id_invalid(
+            self: @ContractState,
+            contract_address: ContractAddress,
+            unique_id: u256
+        ) -> bool {
+            self.logics.is_unique_id_invalid(contract_address, unique_id)
+        }
+        fn compute_admin_fee(self: @ContractState, interest: u256, admin_fee_bps: u256) -> u256 {
+            self.logics.compute_admin_fee(interest, admin_fee_bps)
+        }
+    }
+}
