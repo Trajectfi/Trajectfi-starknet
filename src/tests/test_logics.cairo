@@ -83,9 +83,7 @@ mod MockLogicsContract {
             self.logics.invalidate_unique_id(unique_id)
         }
         fn is_unique_id_invalid(
-            self: @ContractState,
-            contract_address: ContractAddress,
-            unique_id: u256
+            self: @ContractState, contract_address: ContractAddress, unique_id: u256
         ) -> bool {
             self.logics.is_unique_id_invalid(contract_address, unique_id)
         }

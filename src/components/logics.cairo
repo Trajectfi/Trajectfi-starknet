@@ -56,7 +56,9 @@ pub mod LogicComponent {
         /// Computes the admin fee from interest using basis points (bps).
         /// admin_fee = (interest * admin_fee_bps) / 10_000
         /// Handles zero values and uses safe u256 math.
-        fn compute_admin_fee(self: @ComponentState<TContractState>, interest: u256, admin_fee_bps: u256) -> u256 {
+        fn compute_admin_fee(
+            self: @ComponentState<TContractState>, interest: u256, admin_fee_bps: u256
+        ) -> u256 {
             if interest == 0_u256 || admin_fee_bps == 0_u256 {
                 return 0_u256;
             }
