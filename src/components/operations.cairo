@@ -55,6 +55,16 @@ pub mod OperationsComponent {
             // place the is_valid_loan check here
             loan.status == LoanStatus::ONGOING
         }
+
+        fn can_renegotiate_loan(self: @ComponentState<TContractState>, loan_id: u256) -> bool {
+            // if (!self.is_valid_loan(loan_id)) {
+            //     return false;
+            // }
+
+            let loan = self.get_loan(loan_id);
+
+            loan.status != LoanStatus::FORECLOSED && loan.status != LoanStatus::REPAID
+        }
     }
 
     #[generate_trait]
