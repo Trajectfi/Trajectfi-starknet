@@ -1,6 +1,5 @@
 use starknet::{ContractAddress};
 use starknet::storage::{StoragePointerWriteAccess, StoragePathEntry};
-use trajectfi::components::operations::OperationsComponent;
 use trajectfi::components::operations::OperationsComponent::{OperationsImpl};
 use trajectfi::types::{Loan, LoanStatus};
 
@@ -334,4 +333,69 @@ fn create_test_loan(id: u256, status: LoanStatus) -> Loan {
         lender: contract_address_const::<4>(),
         status,
     }
+}
+
+#[test]
+fn test_can_renegotiate_active_loan() {
+    // Setup test environment
+    let mut state: MockOperationsContract::ContractState =
+        MockOperationsContract::contract_state_for_testing();
+
+    // Create an active loan
+    let loan_id = 1_u256;
+    let valid_loan = create_test_loan(loan_id, LoanStatus::ONGOING);
+    state.operations.loans.entry(loan_id).write(valid_loan);
+    state.operations.loan_exists.entry(loan_id).write(true);
+
+    // Verify an active loan can be renegotiated
+    let result = state.can_renegotiate_loan(loan_id);
+    assert(result, 'Loan should be renegotiable');
+}
+
+#[test]
+fn test_can_renegotiate_repaid_loan() {
+    // Setup test environment
+    let mut state: MockOperationsContract::ContractState =
+        MockOperationsContract::contract_state_for_testing();
+
+    // Create a repaid loan
+    let loan_id = 1_u256;
+    let valid_loan = create_test_loan(loan_id, LoanStatus::REPAID);
+    state.operations.loans.entry(loan_id).write(valid_loan);
+    state.operations.loan_exists.entry(loan_id).write(true);
+
+    // Verify a repaid loan cannot be renegotiated
+    let result = state.can_renegotiate_loan(loan_id);
+    assert(!result, 'Loan should not be renegotiable');
+}
+
+#[test]
+fn test_can_renegotiate_foreclosed_loan() {
+    // Setup test environment
+    let mut state: MockOperationsContract::ContractState =
+        MockOperationsContract::contract_state_for_testing();
+
+    // Create a foreclosed loan
+    let loan_id = 1_u256;
+    let valid_loan = create_test_loan(loan_id, LoanStatus::FORECLOSED);
+    state.operations.loans.entry(loan_id).write(valid_loan);
+    state.operations.loan_exists.entry(loan_id).write(true);
+
+    // Verify a foreclosed loan cannot be renegotiated
+    let result = state.can_renegotiate_loan(loan_id);
+    assert(!result, 'Loan should not be renegotiable');
+}
+
+#[test]
+fn test_can_renegotiate_invalid_id_loan() {
+    // Setup test environment
+    let mut state: MockOperationsContract::ContractState =
+        MockOperationsContract::contract_state_for_testing();
+
+    // Use a loan ID that does not exist
+    let invalid_id = 99_u256;
+
+    // Verify an uninitialized loan cannot be renegotiated
+    let result = state.can_renegotiate_loan(invalid_id);
+    assert(!result, 'Loan should not be renegotiable');
 }
