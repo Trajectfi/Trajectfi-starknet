@@ -11,13 +11,14 @@ pub mod OperationsComponent {
         StoragePointerWriteAccess,
     };
     use trajectfi::interfaces::ioperations::IOperations;
-    use crate::types::{Loan, LoanStatus};
+    use crate::types::{Loan, LoanStatus, LoanTrait};
 
 
     #[storage]
     pub struct Storage {
         pub loans: Map<u256, Loan>,
         pub loan_count: u256,
+        pub loan_exists: Map<u256, bool>,
     }
     #[event]
     #[derive(Drop, starknet::Event)]
@@ -56,10 +57,33 @@ pub mod OperationsComponent {
             loan.status == LoanStatus::ONGOING
         }
 
+
+        fn is_valid_loan(self: @ComponentState<TContractState>, loan_id: u256) -> bool {
+            // Check for zero loan_id
+            if loan_id == 0 {
+                return false;
+            }
+
+            // Check if loan exists in storage
+            if !self.loan_exists.read(loan_id) {
+                return false;
+            }
+
+            let loan = self.loans.read(loan_id);
+
+            // Check if the loan is initialized wrongly
+            if self.loans.read(loan_id) == LoanTrait::default() {
+                return false;
+            }
+
+            // Check if stored loan has matching ID and is not in a terminal state
+            loan.id == loan_id && loan.status != LoanStatus::NOT_INITIALIZED
+        }
+
         fn can_renegotiate_loan(self: @ComponentState<TContractState>, loan_id: u256) -> bool {
-            // if (!self.is_valid_loan(loan_id)) {
-            //     return false;
-            // }
+            if (!self.is_valid_loan(loan_id)) {
+                return false;
+            }
 
             let loan = self.get_loan(loan_id);
 
@@ -101,6 +125,7 @@ pub mod OperationsComponent {
             };
             self.loans.entry(id).write(loan);
             self.loan_count.write(id);
+            self.loan_exists.entry(id).write(true);
             self
                 .emit(
                     LoanCreated {

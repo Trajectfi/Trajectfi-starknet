@@ -230,37 +230,125 @@ fn test_is_active_loan_false() {
     assert(!state.is_active_loan(loan_id), 'Loan should not be active');
 }
 
+// ---- Test for is_valid_loan ----
+#[test]
+fn test_is_valid_loan() {
+    // Setup test environment
+    let mut state: MockOperationsContract::ContractState =
+        MockOperationsContract::contract_state_for_testing();
+
+    // Create loan directly in storage
+    let loan_id = 1_u256;
+
+    // Create a valid loan
+    let valid_loan = create_test_loan(loan_id, LoanStatus::ONGOING);
+    state.operations.loans.entry(loan_id).write(valid_loan);
+    state.operations.loan_exists.entry(loan_id).write(true);
+
+    // Check if the loan is valid
+    assert(state.is_valid_loan(loan_id), 'Loan should be valid/true');
+}
+
+#[test]
+fn test_is_valid_loan_non_existent() {
+    // Setup
+    let mut state: MockOperationsContract::ContractState =
+        MockOperationsContract::contract_state_for_testing();
+    let non_existent_loan_id = 123_u256;
+
+    // Check
+    assert(!state.is_valid_loan(non_existent_loan_id), 'Should return false');
+}
+
+#[test]
+fn test_is_valid_loan_zero_id() {
+    // Setup
+    let state: MockOperationsContract::ContractState =
+        MockOperationsContract::contract_state_for_testing();
+
+    // Test
+    assert(!state.is_valid_loan(0_u256), 'Should return false');
+}
+
+#[test]
+fn test_is_valid_loan_mismatched_id() {
+    // Setup
+    let mut state = MockOperationsContract::contract_state_for_testing();
+    let loan_id = 789_u256;
+
+    // Create loan with mismatched ID
+    let loan_with_wrong_id = create_test_loan(id: 10_u256, status: LoanStatus::ONGOING);
+    state.operations.loans.entry(loan_id).write(loan_with_wrong_id);
+
+    // Test
+    let is_valid = state.is_valid_loan(loan_id);
+    assert(!is_valid, 'Should return false');
+}
+
+#[test]
+fn test_is_valid_loan_foreclosed_status() {
+    // Setup
+    let mut state: MockOperationsContract::ContractState =
+        MockOperationsContract::contract_state_for_testing();
+
+    // Create a loan with FORECLOSED status
+    let loan_id = 1_u256;
+    let foreclosed_loan = create_test_loan(loan_id, LoanStatus::FORECLOSED);
+    state.operations.loans.entry(loan_id).write(foreclosed_loan);
+    state.operations.loan_exists.entry(loan_id).write(true);
+
+    // Check if the loan is valid
+    assert(state.is_valid_loan(loan_id), 'Loan should still be valid');
+}
+
+#[test]
+fn test_is_valid_loan_repaid_status() {
+    // Setup test environment
+    let mut state: MockOperationsContract::ContractState =
+        MockOperationsContract::contract_state_for_testing();
+
+    // Create a loan with REPAID status
+    let loan_id = 1_u256;
+    let repaid_loan = create_test_loan(loan_id, LoanStatus::REPAID);
+    state.operations.loans.entry(loan_id).write(repaid_loan);
+    state.operations.loan_exists.entry(loan_id).write(true);
+
+    // Check if the loan is valid
+    assert(state.is_valid_loan(loan_id), 'Loan should be still valid');
+}
+
+
+// Helper function to create test loans
+fn create_test_loan(id: u256, status: LoanStatus) -> Loan {
+    Loan {
+        id,
+        principal: 1000_u256,
+        repayment_amount: 1100_u256,
+        collateral_contract: contract_address_const::<1>(),
+        collateral_id: 1_u256,
+        token_contract: contract_address_const::<2>(),
+        loan_start_time: 3600000000_u64,
+        loan_duration: 86400_u64,
+        admin_fee: 250_u64,
+        borrower: contract_address_const::<3>(),
+        lender: contract_address_const::<4>(),
+        status,
+    }
+}
+
 #[test]
 fn test_can_renegotiate_active_loan() {
     // Setup test environment
     let mut state: MockOperationsContract::ContractState =
         MockOperationsContract::contract_state_for_testing();
 
-    // Create mock addresses
-    let borrower = contract_address_const::<1>();
-    let lender = contract_address_const::<2>();
-    let collateral_contract = contract_address_const::<3>();
-    let token_contract = contract_address_const::<4>();
-
-    let timestamp = 3000000000_u64;
-
     // Create loan directly in storage
     let loan_id = 1_u256;
-    let loan = Loan {
-        id: loan_id,
-        principal: 1000_u256,
-        repayment_amount: 1100_u256,
-        collateral_contract,
-        collateral_id: 1_u256,
-        token_contract,
-        loan_start_time: timestamp,
-        loan_duration: 86400_u64,
-        admin_fee: 250_u64,
-        borrower,
-        lender,
-        status: LoanStatus::ONGOING,
-    };
-    state.operations.loans.entry(loan_id).write(loan);
+
+    // Create a valid loan
+    let valid_loan = create_test_loan(loan_id, LoanStatus::ONGOING);
+    state.operations.loans.entry(loan_id).write(valid_loan);
+    state.operations.loan_exists.entry(loan_id).write(true);
 
     // Verify an active loan can be renegotiated
     let result = state.can_renegotiate_loan(loan_id);
