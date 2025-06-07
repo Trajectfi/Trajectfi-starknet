@@ -1,6 +1,5 @@
 use starknet::{ContractAddress};
 use starknet::storage::{StoragePointerWriteAccess, StoragePathEntry};
-use trajectfi::components::operations::OperationsComponent;
 use trajectfi::components::operations::OperationsComponent::{OperationsImpl};
 use trajectfi::types::{Loan, LoanStatus};
 
@@ -342,10 +341,8 @@ fn test_can_renegotiate_active_loan() {
     let mut state: MockOperationsContract::ContractState =
         MockOperationsContract::contract_state_for_testing();
 
-    // Create loan directly in storage
+    // Create an active loan
     let loan_id = 1_u256;
-
-    // Create a valid loan
     let valid_loan = create_test_loan(loan_id, LoanStatus::ONGOING);
     state.operations.loans.entry(loan_id).write(valid_loan);
     state.operations.loan_exists.entry(loan_id).write(true);
@@ -361,31 +358,11 @@ fn test_can_renegotiate_repaid_loan() {
     let mut state: MockOperationsContract::ContractState =
         MockOperationsContract::contract_state_for_testing();
 
-    // Create mock addresses
-    let borrower = contract_address_const::<1>();
-    let lender = contract_address_const::<2>();
-    let collateral_contract = contract_address_const::<3>();
-    let token_contract = contract_address_const::<4>();
-
-    let timestamp = 3000000000_u64;
-
-    // Create loan directly in storage
+    // Create a repaid loan
     let loan_id = 1_u256;
-    let loan = Loan {
-        id: loan_id,
-        principal: 1000_u256,
-        repayment_amount: 1100_u256,
-        collateral_contract,
-        collateral_id: 1_u256,
-        token_contract,
-        loan_start_time: timestamp,
-        loan_duration: 86400_u64,
-        admin_fee: 250_u64,
-        borrower,
-        lender,
-        status: LoanStatus::REPAID,
-    };
-    state.operations.loans.entry(loan_id).write(loan);
+    let valid_loan = create_test_loan(loan_id, LoanStatus::REPAID);
+    state.operations.loans.entry(loan_id).write(valid_loan);
+    state.operations.loan_exists.entry(loan_id).write(true);
 
     // Verify a repaid loan cannot be renegotiated
     let result = state.can_renegotiate_loan(loan_id);
@@ -398,31 +375,11 @@ fn test_can_renegotiate_foreclosed_loan() {
     let mut state: MockOperationsContract::ContractState =
         MockOperationsContract::contract_state_for_testing();
 
-    // Create mock addresses
-    let borrower = contract_address_const::<1>();
-    let lender = contract_address_const::<2>();
-    let collateral_contract = contract_address_const::<3>();
-    let token_contract = contract_address_const::<4>();
-
-    let timestamp = 3000000000_u64;
-
-    // Create loan directly in storage (foreclosed)
+    // Create a foreclosed loan
     let loan_id = 1_u256;
-    let loan = Loan {
-        id: loan_id,
-        principal: 1000_u256,
-        repayment_amount: 1100_u256,
-        collateral_contract,
-        collateral_id: 1_u256,
-        token_contract,
-        loan_start_time: timestamp,
-        loan_duration: 86400_u64,
-        admin_fee: 250_u64,
-        borrower,
-        lender,
-        status: LoanStatus::FORECLOSED,
-    };
-    state.operations.loans.entry(loan_id).write(loan);
+    let valid_loan = create_test_loan(loan_id, LoanStatus::FORECLOSED);
+    state.operations.loans.entry(loan_id).write(valid_loan);
+    state.operations.loan_exists.entry(loan_id).write(true);
 
     // Verify a foreclosed loan cannot be renegotiated
     let result = state.can_renegotiate_loan(loan_id);
@@ -438,7 +395,7 @@ fn test_can_renegotiate_invalid_id_loan() {
     // Use a loan ID that does not exist
     let invalid_id = 99_u256;
 
-    // Verify an uninitialised loan cannot be renegotiated
+    // Verify an uninitialized loan cannot be renegotiated
     let result = state.can_renegotiate_loan(invalid_id);
     assert(!result, 'Loan should not be renegotiable');
 }
