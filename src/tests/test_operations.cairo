@@ -2,7 +2,7 @@ use starknet::{ContractAddress};
 use starknet::storage::{StoragePointerWriteAccess, StoragePathEntry};
 use trajectfi::components::operations::OperationsComponent::{OperationsImpl};
 use trajectfi::types::{Loan, LoanStatus};
-use starknet::testing::set_block_timestamp;
+use snforge_std::{test_address, start_cheat_block_timestamp, stop_cheat_block_timestamp};
 
 
 #[test]
@@ -407,11 +407,11 @@ fn test_is_not_defaulted_loan() {
     // Setup test environment
     let mut state: MockOperationsContract::ContractState =
         MockOperationsContract::contract_state_for_testing();
+    let test_contract_address: ContractAddress = test_address();
 
     // Create loan directly in storage
     let loan_id = 1_u256;
     let time_stamp = 2000;
-    set_block_timestamp(time_stamp);
 
     // Create a valid loan
     let valid_loan = Loan {
@@ -432,10 +432,12 @@ fn test_is_not_defaulted_loan() {
     state.operations.loan_exists.entry(loan_id).write(true);
 
     // Set new timestamp to ensure check passes
-    set_block_timestamp(time_stamp + 2000);
+    start_cheat_block_timestamp(test_contract_address, time_stamp + 2000);
 
     // Check if the loan is valid
     assert(state.is_not_defaulted_loan(loan_id), 'should not be defaulted');
+
+    stop_cheat_block_timestamp(test_contract_address);
 }
 
 #[test]
@@ -447,7 +449,7 @@ fn test_is_not_defaulted_loan_defaulted() {
     // Create loan directly in storage
     let loan_id = 1_u256;
     let time_stamp = 2000;
-    set_block_timestamp(time_stamp);
+    let test_contract_address: ContractAddress = test_address();
 
     // Create a valid loan
     let valid_loan = Loan {
@@ -468,8 +470,10 @@ fn test_is_not_defaulted_loan_defaulted() {
     state.operations.loan_exists.entry(loan_id).write(true);
 
     // Set new timestamp to ensure check fails
-    set_block_timestamp(time_stamp + 90000);
+    start_cheat_block_timestamp(test_contract_address, time_stamp + 90000);
 
     // Check if the loan is valid
     assert(!state.is_not_defaulted_loan(loan_id), 'should be defaulted');
+
+    stop_cheat_block_timestamp(test_contract_address);
 }
