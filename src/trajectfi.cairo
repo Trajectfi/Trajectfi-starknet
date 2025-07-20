@@ -11,6 +11,7 @@ pub mod Trajectfi {
     use trajectfi::components::admin::AdminComponent;
     use trajectfi::components::logics::LogicComponent;
     use trajectfi::components::signing::SigningComponent;
+    use trajectfi::components::operations::OperationsComponent;
     use trajectfi::interfaces::itrajectfi::ITrajectfi;
     use trajectfi::types::{ADMIN_ROLE, OWNER_ROLE};
 
@@ -25,6 +26,7 @@ pub mod Trajectfi {
 
     component!(path: LogicComponent, storage: logics_storage, event: LogicComponentEvent);
     component!(path: SigningComponent, storage: signing_storage, event: SigningComponentEvent);
+    component!(path: OperationsComponent, storage: operations_storage, event: OperationsEvent);
     component!(path: ERC721Component, storage: erc721, event: ERC721Event);
     component!(path: SRC5Component, storage: src5, event: SRC5Event);
 
@@ -78,6 +80,8 @@ pub mod Trajectfi {
         logics_storage: LogicComponent::Storage,
         #[substorage(v0)]
         signing_storage: SigningComponent::Storage,
+        #[substorage(v0)]
+        operations_storage: OperationsComponent::Storage,
     }
 
     #[event]
@@ -103,6 +107,8 @@ pub mod Trajectfi {
         LogicComponentEvent: LogicComponent::Event,
         #[flat]
         SigningComponentEvent: SigningComponent::Event,
+        #[flat]
+        OperationsEvent: OperationsComponent::Event,
     }
 
     #[constructor]

@@ -89,6 +89,20 @@ pub mod OperationsComponent {
 
             loan.status != LoanStatus::FORECLOSED && loan.status != LoanStatus::REPAID
         }
+
+        fn is_not_defaulted_loan(self: @ComponentState<TContractState>, loan_id: u256) -> bool {
+            if !self.is_valid_loan(loan_id) {
+                return false;
+            }
+
+            let loan = self.get_loan(loan_id);
+
+            let check = loan.loan_start_time + loan.loan_duration > get_block_timestamp();
+            if !check {
+                return false;
+            }
+            true
+        }
     }
 
     #[generate_trait]
