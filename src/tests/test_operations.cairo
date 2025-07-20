@@ -2,6 +2,7 @@ use starknet::{ContractAddress};
 use starknet::storage::{StoragePointerWriteAccess, StoragePathEntry};
 use trajectfi::components::operations::OperationsComponent::{OperationsImpl};
 use trajectfi::types::{Loan, LoanStatus};
+use starknet::testing::set_block_timestamp;
 
 
 #[test]
@@ -398,4 +399,77 @@ fn test_can_renegotiate_invalid_id_loan() {
     // Verify an uninitialized loan cannot be renegotiated
     let result = state.can_renegotiate_loan(invalid_id);
     assert(!result, 'Loan should not be renegotiable');
+}
+
+// ---- Test for is_not_defaulted_loan ----
+#[test]
+fn test_is_not_defaulted_loan() {
+    // Setup test environment
+    let mut state: MockOperationsContract::ContractState =
+        MockOperationsContract::contract_state_for_testing();
+
+    // Create loan directly in storage
+    let loan_id = 1_u256;
+    let time_stamp = 2000;
+    set_block_timestamp(time_stamp);
+
+    // Create a valid loan
+    let valid_loan = Loan {
+        id: loan_id,
+        principal: 1000_u256,
+        repayment_amount: 1100_u256,
+        collateral_contract: contract_address_const::<1>(),
+        collateral_id: 1_u256,
+        token_contract: contract_address_const::<2>(),
+        loan_start_time: time_stamp,
+        loan_duration: 86400_u64,
+        admin_fee: 250_u64,
+        borrower: contract_address_const::<3>(),
+        lender: contract_address_const::<4>(),
+        status: LoanStatus::ONGOING,
+    };
+    state.operations.loans.entry(loan_id).write(valid_loan);
+    state.operations.loan_exists.entry(loan_id).write(true);
+
+    // Set new timestamp to ensure check passes
+    set_block_timestamp(time_stamp + 2000);
+
+    // Check if the loan is valid
+    assert(state.is_not_defaulted_loan(loan_id), 'should not be defaulted');
+}
+
+#[test]
+fn test_is_not_defaulted_loan_defaulted() {
+    // Setup test environment
+    let mut state: MockOperationsContract::ContractState =
+        MockOperationsContract::contract_state_for_testing();
+
+    // Create loan directly in storage
+    let loan_id = 1_u256;
+    let time_stamp = 2000;
+    set_block_timestamp(time_stamp);
+
+    // Create a valid loan
+    let valid_loan = Loan {
+        id: loan_id,
+        principal: 1000_u256,
+        repayment_amount: 1100_u256,
+        collateral_contract: contract_address_const::<1>(),
+        collateral_id: 1_u256,
+        token_contract: contract_address_const::<2>(),
+        loan_start_time: time_stamp,
+        loan_duration: 86400_u64,
+        admin_fee: 250_u64,
+        borrower: contract_address_const::<3>(),
+        lender: contract_address_const::<4>(),
+        status: LoanStatus::ONGOING,
+    };
+    state.operations.loans.entry(loan_id).write(valid_loan);
+    state.operations.loan_exists.entry(loan_id).write(true);
+
+    // Set new timestamp to ensure check fails
+    set_block_timestamp(time_stamp + 90000);
+
+    // Check if the loan is valid
+    assert(!state.is_not_defaulted_loan(loan_id), 'should be defaulted');
 }
