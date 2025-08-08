@@ -46,3 +46,24 @@ pub impl DefaultLoan of LoanTrait {
         }
     }
 }
+
+#[derive(Copy, Drop, PartialEq, Serde, starknet::Store)]
+pub enum ListingStatus {
+    OPEN,
+    CLOSED,
+}
+
+#[derive(Copy, Drop, Serde, starknet::Store)]
+pub struct Listing {
+    pub id: u256,
+    pub nft_contract: ContractAddress,
+    pub nft_id: u256,
+    pub token_contract: Option<ContractAddress>,
+    pub token_amount: Option<u256>,
+    pub borrow_amount: Option<u256>,
+    pub repayment_amount: Option<u256>,
+    pub loan_duration: Option<u64>,
+    pub status: ListingStatus,
+    pub created_at: u64,
+    pub updated_at: u64,
+}
