@@ -2,7 +2,7 @@ pub mod components {
     pub mod admin;
     pub mod logics;
     pub mod operations;
-    pub mod signing;
+    pub mod market;
 }
 pub mod errors;
 pub mod interfaces {
@@ -11,6 +11,7 @@ pub mod interfaces {
     pub mod ierc721;
     pub mod ioperations;
     pub mod itrajectfi;
+    pub mod imarket;
 }
 pub mod types;
 
