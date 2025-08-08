@@ -24,15 +24,9 @@ pub mod MarketComponent {
             borrow_amount: Option<u256>,
             repayment_amount: Option<u256>,
             loan_duration: Option<u64>,
-        ){}
-        fn close_listing(
-            ref self: ComponentState<TContractState>,
-            id: u256,
-        ){}
-        fn get_listing(
-            self: @ComponentState<TContractState>,
-            id: u256,
-        ) -> Listing {
+        ) {}
+        fn close_listing(ref self: ComponentState<TContractState>, id: u256,) {}
+        fn get_listing(self: @ComponentState<TContractState>, id: u256,) -> Listing {
             Listing {
                 id: id,
                 nft_contract: 0.try_into().unwrap(),
@@ -47,15 +41,19 @@ pub mod MarketComponent {
                 updated_at: 0,
             }
         }
-        fn get_listings(self: @ComponentState<TContractState>) -> Array<Listing>{
+        fn get_listings(self: @ComponentState<TContractState>) -> Array<Listing> {
             let listings: Array<Listing> = array![];
             listings
         }
-        fn get_listings_by_nft(self: @ComponentState<TContractState>, nft_contract: ContractAddress) -> Array<Listing>{
+        fn get_listings_by_nft(
+            self: @ComponentState<TContractState>, nft_contract: ContractAddress
+        ) -> Array<Listing> {
             let listings: Array<Listing> = array![];
             listings
         }
-        fn get_listings_by_token(self: @ComponentState<TContractState>, token_contract: ContractAddress) -> Array<Listing>{
+        fn get_listings_by_token(
+            self: @ComponentState<TContractState>, token_contract: ContractAddress
+        ) -> Array<Listing> {
             let listings: Array<Listing> = array![];
             listings
         }
