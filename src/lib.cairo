@@ -11,6 +11,7 @@ pub mod interfaces {
     pub mod ierc721;
     pub mod ioperations;
     pub mod itrajectfi;
+    pub mod imarket;
 }
 pub mod types;
 
