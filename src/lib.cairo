@@ -2,7 +2,7 @@ pub mod components {
     pub mod admin;
     pub mod logics;
     pub mod operations;
-    pub mod signing;
+    pub mod market;
 }
 pub mod errors;
 pub mod interfaces {

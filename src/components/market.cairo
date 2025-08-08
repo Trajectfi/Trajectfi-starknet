@@ -1,5 +1,5 @@
 #[starknet::component]
-pub mod SigningComponent {
+pub mod MarketComponent {
     #[storage]
     pub struct Storage {}
 

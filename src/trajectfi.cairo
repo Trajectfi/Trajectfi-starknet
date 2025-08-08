@@ -10,7 +10,7 @@ pub mod Trajectfi {
     use starknet::ContractAddress;
     use trajectfi::components::admin::AdminComponent;
     use trajectfi::components::logics::LogicComponent;
-    use trajectfi::components::signing::SigningComponent;
+    use trajectfi::components::market::MarketComponent;
     use trajectfi::components::operations::OperationsComponent;
     use trajectfi::interfaces::itrajectfi::ITrajectfi;
     use trajectfi::types::{ADMIN_ROLE, OWNER_ROLE};
@@ -25,7 +25,7 @@ pub mod Trajectfi {
     component!(path: AdminComponent, storage: admin_storage, event: AdminComponentEvent);
 
     component!(path: LogicComponent, storage: logics_storage, event: LogicComponentEvent);
-    component!(path: SigningComponent, storage: signing_storage, event: SigningComponentEvent);
+    component!(path: MarketComponent, storage: market_storage, event: MarketComponentEvent);
     component!(path: OperationsComponent, storage: operations_storage, event: OperationsEvent);
     component!(path: ERC721Component, storage: erc721, event: ERC721Event);
     component!(path: SRC5Component, storage: src5, event: SRC5Event);
@@ -79,7 +79,7 @@ pub mod Trajectfi {
         #[substorage(v0)]
         logics_storage: LogicComponent::Storage,
         #[substorage(v0)]
-        signing_storage: SigningComponent::Storage,
+        market_storage: MarketComponent::Storage,
         #[substorage(v0)]
         operations_storage: OperationsComponent::Storage,
     }
@@ -106,7 +106,7 @@ pub mod Trajectfi {
         #[flat]
         LogicComponentEvent: LogicComponent::Event,
         #[flat]
-        SigningComponentEvent: SigningComponent::Event,
+        MarketComponentEvent: MarketComponent::Event,
         #[flat]
         OperationsEvent: OperationsComponent::Event,
     }
