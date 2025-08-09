@@ -67,3 +67,29 @@ pub struct Listing {
     pub created_at: u64,
     pub updated_at: u64,
 }
+
+#[derive(Copy, Drop, PartialEq, Serde, starknet::Store)]
+pub enum OfferStatus {
+    OPEN,
+    ACCEPTED,
+    CLOSED,
+    REJECTED
+}
+
+#[derive(Copy, Drop, Serde, starknet::Store)]
+pub struct Offer {
+    pub id: u256,
+    pub listing_id: u256,
+    pub borrower: ContractAddress,
+    pub nft_contract: ContractAddress,
+    pub nft_id: u256,
+    pub token_contract: ContractAddress,
+    pub token_amount: u256,
+    pub borrow_amount: u256,
+    pub repayment_amount: u256,
+    pub loan_duration: u64,
+    pub offer_expiration: u64,
+    pub status: OfferStatus,
+    pub created_at: u64,
+    pub updated_at: u64,
+}
