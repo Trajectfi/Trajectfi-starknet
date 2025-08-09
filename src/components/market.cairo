@@ -67,12 +67,14 @@ pub mod MarketComponent {
             loan_duration: u64,
         ) {}
         fn accept_offer(
-            ref self: ComponentState<TContractState>,
-            listing_id: u256,
-            offer_id: u256,
+            ref self: ComponentState<TContractState>, listing_id: u256, offer_id: u256,
         ) {}
-        fn close_offer(ref self: ComponentState<TContractState>, listing_id: u256, offer_id: u256) {}
-        fn get_offer(self: @ComponentState<TContractState>, listing_id: u256, offer_id: u256) -> Offer {
+        fn close_offer(
+            ref self: ComponentState<TContractState>, listing_id: u256, offer_id: u256
+        ) {}
+        fn get_offer(
+            self: @ComponentState<TContractState>, listing_id: u256, offer_id: u256
+        ) -> Offer {
             Offer {
                 id: 0,
                 listing_id: listing_id,
@@ -90,11 +92,15 @@ pub mod MarketComponent {
                 updated_at: 0,
             }
         }
-        fn get_offers(self: @ComponentState<TContractState>, listing_id: u256, offer_id: u256) -> Array<Offer> {
+        fn get_offers(
+            self: @ComponentState<TContractState>, listing_id: u256, offer_id: u256
+        ) -> Array<Offer> {
             let offers: Array<Offer> = array![];
             offers
         }
-        fn get_open_offers(self: @ComponentState<TContractState>, listing_id: u256, offer_id: u256) -> Array<Offer> {
+        fn get_open_offers(
+            self: @ComponentState<TContractState>, listing_id: u256, offer_id: u256
+        ) -> Array<Offer> {
             let offers: Array<Offer> = array![];
             offers
         }

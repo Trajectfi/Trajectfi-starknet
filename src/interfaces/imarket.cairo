@@ -27,7 +27,7 @@ pub trait IMarket<TContractState> {
         token_amount: u256,
         borrow_amount: u256,
         repayment_amount: u256,
-        loan_duration: u64        
+        loan_duration: u64
     );
     fn accept_offer(ref self: TContractState, listing_id: u256, offer_id: u256);
     fn close_offer(ref self: TContractState, listing_id: u256, offer_id: u256);
